@@ -12,6 +12,10 @@ const config = {
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:8080',
       'http://localhost:5173',
+      'https://agrico-sooty.vercel.app',
+      'https://agrico-hrithicks-projects-be453f76.vercel.app',
+      'https://agrico-git-main-hrithicks-projects-be453f76.vercel.app',
+      'https://agrico-jf2zubra5-hrithicks-projects-be453f76.vercel.app',
       'https://agrico-7y0qmnypk-hrithicks-projects-be453f76.vercel.app',
       'https://agrico-h75lzlo9z-hrithicks-projects-be453f76.vercel.app',
       'https://agrico-c2mmyrz3u-hrithicks-projects-be453f76.vercel.app'
