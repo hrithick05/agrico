@@ -5,25 +5,49 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 // Equipment API
 export const equipmentApi = {
   async getAll(): Promise<Equipment[]> {
-    const response = await fetch(`${API_BASE_URL}/equipment`)
+    const response = await fetch(`${API_BASE_URL}/equipment`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
     if (!response.ok) throw new Error('Failed to fetch equipment')
     return response.json()
   },
 
   async getByType(type: string): Promise<Equipment[]> {
-    const response = await fetch(`${API_BASE_URL}/equipment/type/${type}`)
+    const response = await fetch(`${API_BASE_URL}/equipment/type/${type}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
     if (!response.ok) throw new Error('Failed to fetch equipment by type')
     return response.json()
   },
 
   async getAvailable(): Promise<Equipment[]> {
-    const response = await fetch(`${API_BASE_URL}/equipment/available`)
+    const response = await fetch(`${API_BASE_URL}/equipment/available`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
     if (!response.ok) throw new Error('Failed to fetch available equipment')
     return response.json()
   },
 
   async search(query: string): Promise<Equipment[]> {
-    const response = await fetch(`${API_BASE_URL}/equipment/search?q=${encodeURIComponent(query)}`)
+    const response = await fetch(`${API_BASE_URL}/equipment/search?q=${encodeURIComponent(query)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    })
     if (!response.ok) throw new Error('Failed to search equipment')
     return response.json()
   },
