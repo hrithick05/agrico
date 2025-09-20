@@ -1,0 +1,7 @@
+# Copy this to .env file and replace your-service-key-here with actual service key
+SUPABASE_URL=https://yfcukflinfinmjvllwin.supabase.co
+SUPABASE_SERVICE_KEY=your-service-key-here
+
+PORT=3001
+NODE_ENV=development
+FRONTEND_URL=http://localhost:8081

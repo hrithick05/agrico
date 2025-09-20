@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Comment Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .post {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .post-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .post-content {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .post-meta {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        .comments-section {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .comment {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #007bff;
+        }
+        .comment-author {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .comment-content {
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .comment-meta {
+            font-size: 12px;
+            color: #888;
+        }
+        .add-comment {
+            margin-top: 20px;
+        }
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .comment-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .comment-btn:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌾 Forum Comment Test</h1>
+    <p>This page demonstrates the forum comment functionality with database storage.</p>
+    
+    <div id="status"></div>
+    
+    <div id="posts-container">
+        <p>Loading posts...</p>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001/api';
+        
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 3000);
+        }
+        
+        async function loadPosts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/forum/posts`);
+                const posts = await response.json();
+                
+                const container = document.getElementById('posts-container');
+                container.innerHTML = '';
+                
+                posts.forEach(post => {
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'post';
+                    postDiv.innerHTML = `
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-meta">
+                            By ${post.author} • ${post.timeAgo} • ${post.likes} likes • ${post.replies.length} comments
+                        </div>
+                        <div class="comments-section">
+                            <h3>Comments (${post.replies.length})</h3>
+                            <div id="comments-${post.id}">
+                                ${post.replies.map(comment => `
+                                    <div class="comment">
+                                        <div class="comment-author">${comment.author}</div>
+                                        <div class="comment-content">${comment.content}</div>
+                                        <div class="comment-meta">${comment.timeAgo} • ${comment.likes} likes</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="add-comment">
+                                <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Add a comment..."></textarea>
+                                <button class="comment-btn" onclick="addComment(${post.id})">Add Comment</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(postDiv);
+                });
+                
+                showStatus(`Loaded ${posts.length} posts successfully!`);
+            } catch (error) {
+                showStatus(`Error loading posts: ${error.message}`, 'error');
+            }
+        }
+        
+        async function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+            
+            if (!content) {
+                showStatus('Please enter a comment!', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/forum/posts/${postId}/comments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content })
+                });
+                
+                if (response.ok) {
+                    const newComment = await response.json();
+                    showStatus('Comment added successfully!');
+                    input.value = '';
+                    
+                    // Add the new comment to the UI
+                    const commentsDiv = document.getElementById(`comments-${postId}`);
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment';
+                    commentDiv.innerHTML = `
+                        <div class="comment-author">${newComment.author}</div>
+                        <div class="comment-content">${newComment.content}</div>
+                        <div class="comment-meta">${newComment.timeAgo} • ${newComment.likes} likes</div>
+                    `;
+                    commentsDiv.appendChild(commentDiv);
+                    
+                    // Update comment count
+                    const commentsSection = commentsDiv.parentElement;
+                    const h3 = commentsSection.querySelector('h3');
+                    const currentCount = parseInt(h3.textContent.match(/\d+/)[0]);
+                    h3.textContent = `Comments (${currentCount + 1})`;
+                } else {
+                    const error = await response.text();
+                    showStatus(`Failed to add comment: ${error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Error adding comment: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load posts when page loads
+        loadPosts();
+        
+        // Refresh posts every 30 seconds
+        setInterval(loadPosts, 30000);
+    </script>
+</body>
+</html>
