@@ -1,6 +1,6 @@
 import { Equipment, BulkDeal, ForumPost, LendingCircle, Loan, Expense, MarketTrend, MarketAlert, OptimizationSuggestion, GovernmentScheme } from './supabase'
 
-const API_BASE_URL = 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 // Equipment API
 export const equipmentApi = {
