@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "start:dev": "node start-dev.js",
     "backend": "cd server && npm run dev",
-    "backend:install": "cd server && npm install"
+    "backend:install": "cd server && npm install",
+    "vercel-build": "npm install --legacy-peer-deps && npm run build"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.47.0",
